@@ -45,28 +45,37 @@ There are some additional constants defined at the top of the code `seam_carving
 The input image is on the left and the result of the algorithm is on the right.
 ### Vertical Seam Removal
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/castle.jpg" width="438"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/castle_shrink.jpg" width="438">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/castle.jpg" width="438"> 
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/castle_shrink.jpg" width="438">
 
 ### Horizontal Seam Removal
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/museum.jpg" width="438"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/museum_shrink.jpg" width="438">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/museum.jpg" width="438"> 
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/museum_shrink.jpg" width="438">
 
 ### Seam Removal with Protective Masks
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/ratatouille.jpg" width="438"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/ratatouille_resize.jpg" width="438">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/ratatouille.jpg" width="438"> 
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/ratatouille_resize.jpg" width="438">
 
 ### Seam Insertion
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/shore.jpg" width="438"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/shore_backward_energy_expand.jpg" width="438">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/shore.jpg" width="438"> 
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/shore_backward_energy_expand.jpg" width="438">
 
 ### Object Removal
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/gotcast.jpg" width="438"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/kit_remove.jpg" width="438">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/gotcast.jpg" width="600"> 
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/kit_remove.jpg" width="600">
 
 ### Object Removal + Seam Insertion
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/eiffel.jpg" width="438"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/eiffel_forward_removal.jpg" width="438">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/eiffel.jpg" width="600"> 
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/eiffel_forward_removal.jpg" width="600">
 
+Animated gif:
+
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/visuals/eiffel_remove.gif" width="600">
 
 ## Comparison between Energy Functions
 
