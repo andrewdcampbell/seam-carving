@@ -42,48 +42,44 @@ There are some additional constants defined at the top of the code `seam_carving
 
 
 ## Example Results
+
 The input image is on the left and the result of the algorithm is on the right.
+
 ### Vertical Seam Removal
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/castle.jpg" width="438"> 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/castle_shrink.jpg" width="438">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/castle.jpg" height="342"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/castle_shrink.jpg" height="342">
 
 ### Horizontal Seam Removal
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/museum.jpg" width="438"> 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/museum_shrink.jpg" width="438">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/museum.jpg" width="415"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/museum_shrink.jpg" width="415">
 
 ### Seam Removal with Protective Masks
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/ratatouille.jpg" width="438"> 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/ratatouille_resize.jpg" width="438">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/ratatouille.jpg" height="313"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/ratatouille_resize.jpg" height="313">
 
 ### Seam Insertion
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/shore.jpg" width="438"> 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/shore_backward_energy_expand.jpg" width="438">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/shore.jpg" height="460"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/shore_backward_energy_expand.jpg" height="460">
 
 ### Object Removal
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/gotcast.jpg" width="600"> 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/kit_remove.jpg" width="600">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/gotcast.jpg" height="294"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/kit_remove.jpg" height="294">
 
 ### Object Removal + Seam Insertion
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/eiffel.jpg" width="600"> 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/eiffel_forward_removal.jpg" width="600">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/eiffel.jpg" height="230"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/eiffel_forward_removal.jpg" height="230">
 
 Animated gif:
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/visuals/eiffel_remove.gif" width="600">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/visuals/eiffel_remove.gif" width="700">
 
 ## Comparison between Energy Functions
 
 *In general*, forward energy gives better results than backward energy. The result of resizing using backward energy (left) and forward energy (right) is shown below.
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/plane_shrink_backward.jpg" width="438"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/plane_shrink_forward.jpg" width="438">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/plane_shrink_backward.jpg" width="420"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/plane_shrink_forward.jpg" width="420">
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/bench_backward_energy.jpg" width="438"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/bench_forward_energy.jpg" width="438">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/bench_backward_energy.jpg" width="420"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/bench_forward_energy.jpg" width="420">
 
 ---
 For more information on how the algorithm works, see my [blog post](TODO). 
