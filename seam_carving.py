@@ -1,9 +1,11 @@
 # USAGE:
 # python seam_carving.py (-resize | -remove) -im IM -out OUT [-mask MASK]
-#                        [-rmask RMASK] [-dy DY] [-dx DX] [-vis] [-hremove]
-# e.g.
-# python seam_carving.py -resize -im demos/girl.png -out test1.jpg -mask demos/girl_mask.jpg -dy 100 -dx -100 -vis
-# python seam_carving.py -remove -im demos/girl.png -out test2.jpg -rmask demos/girl_mask.jpg -vis
+#                        [-rmask RMASK] [-dy DY] [-dx DX] [-vis] [-hremove] [-backward_energy]
+# Examples:
+# python seam_carving.py -resize -im demos/ratatouille.jpg -out ratatouille_resize.jpg 
+#        -mask demos/ratatouille_mask.jpg -dy 20 -dx -200 -vis
+# python seam_carving.py -remove -im demos/eiffel.jpg -out eiffel_remove.jpg 
+#        -rmask demos/eiffel_mask.jpg -vis
 
 import numpy as np
 import cv2
@@ -11,12 +13,12 @@ import argparse
 from numba import jit
 from scipy import ndimage as ndi
 
-SEAM_VISUALIZE_COLOR = np.array([255, 255, 255]) 
-SHOULD_DOWNSIZE = True
-DOWNSIZE_WIDTH = 500
-ENERGY_MASK_CONST = 100000.0
-MASK_THRESHOLD = 10
-USE_FORWARD_ENERGY = True
+SEAM_COLOR = np.array([255, 200, 200])    # seam visualization color (BGR)
+SHOULD_DOWNSIZE = True                    # if True, downsize image for faster carving
+DOWNSIZE_WIDTH = 500                      # resized image width if SHOULD_DOWNSIZE is True
+ENERGY_MASK_CONST = 100000.0              # large energy value for protective masking
+MASK_THRESHOLD = 10                       # minimum pixel intensity for binary mask
+USE_FORWARD_ENERGY = True                 # if True, use forward energy algorithm
 
 ########################################
 # UTILITY CODE
@@ -25,11 +27,12 @@ USE_FORWARD_ENERGY = True
 def visualize(im, boolmask=None, rotate=False):
     vis = im.astype(np.uint8)
     if boolmask is not None:
-        vis[np.where(boolmask == False)] = SEAM_VISUALIZE_COLOR
+        vis[np.where(boolmask == False)] = SEAM_COLOR
     if rotate:
         vis = rotate_image(vis, False)
     cv2.imshow("visualization", vis)
     cv2.waitKey(1)
+    return vis
 
 def resize(image, width):
     dim = None
@@ -45,28 +48,30 @@ def rotate_image(image, clockwise):
 # ENERGY FUNCTIONS
 ########################################
 
-# TODO: remove ndi dependence
 def backward_energy(im):
-    rgbx = ndi.convolve1d(im, np.array([1, 0, -1]), axis=1, mode='wrap')
-    rgby = ndi.convolve1d(im, np.array([1, 0, -1]), axis=0, mode='wrap')
+    """
+    Simple gradient magnitude energy map.
+    """
+    xgrad = ndi.convolve1d(im, np.array([1, 0, -1]), axis=1, mode='wrap')
+    ygrad = ndi.convolve1d(im, np.array([1, 0, -1]), axis=0, mode='wrap')
     
-    rgbx = np.sum(rgbx**2, axis=2)
-    rgby = np.sum(rgby**2, axis=2)
-    
-    res = np.sqrt(rgbx + rgby)
+    grad_mag = np.sqrt(np.sum(xgrad**2, axis=2) + np.sum(ygrad**2, axis=2))
 
-    # visualize(res)
-    # import pdb; pdb.set_trace()
+    # vis = visualize(grad_mag)
+    # cv2.imwrite("backward_energy_demo.jpg", vis)
 
-    return res
+    return grad_mag
 
 @jit
 def forward_energy(im):
     """
-    https://github.com/axu2/improved-seam-carving/blob/master/Improved%20Seam%20Carving.ipynb
+    Forward energy algorithm as described in "Improved Seam Carving for Video Retargeting"
+    by Rubinstein, Shamir, Avidan.
+
+    Vectorized code adapted from
+    https://github.com/axu2/improved-seam-carving.
     """
     h, w = im.shape[:2]
-    # TODO this is cancer
     im = cv2.cvtColor(im.astype(np.uint8), cv2.COLOR_BGR2GRAY).astype(np.float64)
 
     energy = np.zeros((h, w))
@@ -93,8 +98,8 @@ def forward_energy(im):
         m[i] = np.choose(argmins, mULR)
         energy[i] = np.choose(argmins, cULR)
     
-    # visualize(energy)
-    # import pdb; pdb.set_trace()        
+    # vis = visualize(energy)
+    # cv2.imwrite("forward_energy_demo.jpg", vis)     
         
     return energy
 
@@ -107,10 +112,12 @@ def add_seam(im, seam_idx):
     """
     Add a vertical seam to a 3-channel color image at the indices provided 
     by averaging the pixels values to the left and right of the seam.
+
+    Code adapted from https://github.com/vivianhylee/seam-carving.
     """
-    m, n = im.shape[:2]
-    output = np.zeros((m, n + 1, 3))
-    for row in range(m):
+    h, w = im.shape[:2]
+    output = np.zeros((h, w + 1, 3))
+    for row in range(h):
         col = seam_idx[row]
         for ch in range(3):
             if col == 0:
@@ -132,9 +139,9 @@ def add_seam_grayscale(im, seam_idx):
     Add a vertical seam to a grayscale image at the indices provided 
     by averaging the pixels values to the left and right of the seam.
     """    
-    m, n = im.shape[:2]
-    output = np.zeros((m, n + 1))
-    for row in range(m):
+    h, w = im.shape[:2]
+    output = np.zeros((h, w + 1))
+    for row in range(h):
         col = seam_idx[row]
         if col == 0:
             p = np.average(im[row, col: col + 2])
@@ -151,38 +158,21 @@ def add_seam_grayscale(im, seam_idx):
 
 @jit
 def remove_seam(im, boolmask):
-    """
-    https://karthikkaranth.me/blog/implementing-seam-carving-with-python/
-    """
     h, w = im.shape[:2]
     boolmask3c = np.stack([boolmask] * 3, axis=2)
-    im = im[boolmask3c].reshape((h, w - 1, 3))
-    return im
+    return im[boolmask3c].reshape((h, w - 1, 3))
 
 @jit
 def remove_seam_grayscale(im, boolmask):
-    """
-    https://karthikkaranth.me/blog/implementing-seam-carving-with-python/
-    """
     h, w = im.shape[:2]
-    im = im[boolmask].reshape((h, w - 1))
-    return im  
-
-
-@jit
-def update_seams(remaining_seams, current_seam):
-    output = []
-    for seam in remaining_seams:
-        seam[np.where(seam >= current_seam)] += 2
-        output.append(seam)
-    return output    
-
+    return im[boolmask].reshape((h, w - 1))
 
 @jit
 def get_minimum_seam(im, mask=None, remove_mask=None):
     """
+    DP algorithm for finding the seam of minimum energy. Code adapted from 
     https://karthikkaranth.me/blog/implementing-seam-carving-with-python/
-    """    
+    """
     h, w = im.shape[:2]
     energyfn = forward_energy if USE_FORWARD_ENERGY else backward_energy
     M = energyfn(im)
@@ -190,9 +180,9 @@ def get_minimum_seam(im, mask=None, remove_mask=None):
     if mask is not None:
         M[np.where(mask > MASK_THRESHOLD)] = ENERGY_MASK_CONST
 
+    # give removal mask priority over protective mask by using larger negative value
     if remove_mask is not None:
         M[np.where(remove_mask > MASK_THRESHOLD)] = -ENERGY_MASK_CONST * 100
-
 
     backtrack = np.zeros_like(M, dtype=np.int)
 
@@ -210,7 +200,7 @@ def get_minimum_seam(im, mask=None, remove_mask=None):
 
             M[i, j] += min_energy
 
-    # backtrack path through DP matrix
+    # backtrack to find path
     seam_idx = []
     boolmask = np.ones((h, w), dtype=np.bool)
     j = np.argmin(M[-1])
@@ -261,7 +251,10 @@ def seams_insertion(im, num_add, mask=None, vis=False, rot=False):
             visualize(im, rotate=rot)
         if mask is not None:
             mask = add_seam_grayscale(mask, seam)
-        seams_record = update_seams(seams_record, seam)
+
+        # update the remaining seam indices
+        for remaining_seam in seams_record:
+            remaining_seam[np.where(remaining_seam >= seam)] += 2         
 
     return im, mask
 
@@ -317,7 +310,7 @@ def object_removal(im, rmask, mask=None, vis=False, horizontal_removal=False):
         if mask is not None:
             mask = rotate_image(mask, True)
 
-    while len(np.where(rmask > MASK_THRESHOLD)[0]) > 15:
+    while len(np.where(rmask > MASK_THRESHOLD)[0]) > 0:
         seam_idx, boolmask = get_minimum_seam(output, mask, rmask)
         if vis:
             visualize(output, boolmask, rotate=horizontal_removal)            
