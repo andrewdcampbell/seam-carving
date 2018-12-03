@@ -61,11 +61,11 @@ The input image is on the left and the result of the algorithm is on the right.
 
 <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/shore.jpg" height="460"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/shore_backward_energy_expand.jpg" height="460">
 
-### Object Removal
+### Object Removal with Protective Masks
 
 <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/gotcast.jpg" height="294"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/kit_remove.jpg" height="294">
 
-### Object Removal + Seam Insertion
+### Object Removal with Seam Insertion
 
 <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/eiffel.jpg" height="230"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/eiffel_forward_removal.jpg" height="230">
 
@@ -77,9 +77,9 @@ Animated gif:
 
 *In general*, forward energy gives better results than backward energy. The result of resizing using backward energy (left) and forward energy (right) is shown below.
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/plane_shrink_backward.jpg" width="420"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/plane_shrink_forward.jpg" width="420">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/plane_shrink_backward.jpg" width="400"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/plane_shrink_forward.jpg" width="400">
 
-<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/bench_backward_energy.jpg" width="420"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/bench_forward_energy.jpg" width="420">
+<img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/bench_backward_energy.jpg" width="400"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/bench_forward_energy.jpg" width="400">
 
 ---
 For more information on how the algorithm works, see my [blog post](TODO). 
