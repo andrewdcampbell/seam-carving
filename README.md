@@ -82,7 +82,7 @@ Animated gif:
 <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/bench_backward_energy.jpg" width="400"> <img src="https://github.com/andrewdcampbell/seam-carving/blob/master/demos/bench_forward_energy.jpg" width="400">
 
 ---
-For more information on how the algorithm works, see my [blog post](TODO). 
+For more information on how the algorithm works, see my [blog post](https://andrewdcampbell.github.io/seam-carving). 
 
 ## Acknowledgements
 Many parts of the code are adapted/optimized versions of functionality from other implementations:
