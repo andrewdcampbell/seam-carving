@@ -15,7 +15,7 @@ from scipy import ndimage as ndi
 
 SEAM_COLOR = np.array([255, 200, 200])    # seam visualization color (BGR)
 SHOULD_DOWNSIZE = True                    # if True, downsize image for faster carving
-DOWNSIZE_WIDTH = 700                      # resized image width if SHOULD_DOWNSIZE is True
+DOWNSIZE_WIDTH = 500                      # resized image width if SHOULD_DOWNSIZE is True
 ENERGY_MASK_CONST = 100000.0              # large energy value for protective masking
 MASK_THRESHOLD = 10                       # minimum pixel intensity for binary mask
 USE_FORWARD_ENERGY = True                 # if True, use forward energy algorithm
