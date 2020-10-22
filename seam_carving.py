@@ -10,7 +10,7 @@
 import numpy as np
 import cv2
 import argparse
-from numba import jit
+from numba import njit
 from scipy import ndimage as ndi
 
 SEAM_COLOR = np.array([255, 200, 200])    # seam visualization color (BGR)
@@ -62,7 +62,6 @@ def backward_energy(im):
 
     return grad_mag
 
-@jit
 def forward_energy(im):
     """
     Forward energy algorithm as described in "Improved Seam Carving for Video Retargeting"
@@ -107,7 +106,7 @@ def forward_energy(im):
 # SEAM HELPER FUNCTIONS
 ######################################## 
 
-@jit
+@njit
 def add_seam(im, seam_idx):
     """
     Add a vertical seam to a 3-channel color image at the indices provided 
@@ -121,19 +120,19 @@ def add_seam(im, seam_idx):
         col = seam_idx[row]
         for ch in range(3):
             if col == 0:
-                p = np.average(im[row, col: col + 2, ch])
+                p = np.mean(im[row, col: col + 2, ch])
                 output[row, col, ch] = im[row, col, ch]
                 output[row, col + 1, ch] = p
                 output[row, col + 1:, ch] = im[row, col:, ch]
             else:
-                p = np.average(im[row, col - 1: col + 1, ch])
+                p = np.mean(im[row, col - 1: col + 1, ch])
                 output[row, : col, ch] = im[row, : col, ch]
                 output[row, col, ch] = p
                 output[row, col + 1:, ch] = im[row, col:, ch]
 
     return output
 
-@jit
+@njit
 def add_seam_grayscale(im, seam_idx):
     """
     Add a vertical seam to a grayscale image at the indices provided 
@@ -144,30 +143,27 @@ def add_seam_grayscale(im, seam_idx):
     for row in range(h):
         col = seam_idx[row]
         if col == 0:
-            p = np.average(im[row, col: col + 2])
+            p = np.mean(im[row, col: col + 2])
             output[row, col] = im[row, col]
             output[row, col + 1] = p
             output[row, col + 1:] = im[row, col:]
         else:
-            p = np.average(im[row, col - 1: col + 1])
+            p = np.mean(im[row, col - 1: col + 1])
             output[row, : col] = im[row, : col]
             output[row, col] = p
             output[row, col + 1:] = im[row, col:]
 
     return output
 
-@jit
 def remove_seam(im, boolmask):
     h, w = im.shape[:2]
     boolmask3c = np.stack([boolmask] * 3, axis=2)
     return im[boolmask3c].reshape((h, w - 1, 3))
 
-@jit
 def remove_seam_grayscale(im, boolmask):
     h, w = im.shape[:2]
     return im[boolmask].reshape((h, w - 1))
 
-@jit
 def get_minimum_seam(im, mask=None, remove_mask=None):
     """
     DP algorithm for finding the seam of minimum energy. Code adapted from 
@@ -184,7 +180,13 @@ def get_minimum_seam(im, mask=None, remove_mask=None):
     if remove_mask is not None:
         M[np.where(remove_mask > MASK_THRESHOLD)] = -ENERGY_MASK_CONST * 100
 
-    backtrack = np.zeros_like(M, dtype=np.int)
+    seam_idx, boolmask = compute_shortest_path(M, im, h, w)
+
+    return np.array(seam_idx), boolmask
+
+@njit
+def compute_shortest_path(M, im, h, w):
+    backtrack = np.zeros_like(M, dtype=np.int_)
 
     # populate DP matrix
     for i in range(1, h):
@@ -202,7 +204,7 @@ def get_minimum_seam(im, mask=None, remove_mask=None):
 
     # backtrack to find path
     seam_idx = []
-    boolmask = np.ones((h, w), dtype=np.bool)
+    boolmask = np.ones((h, w), dtype=np.bool_)
     j = np.argmin(M[-1])
     for i in range(h-1, -1, -1):
         boolmask[i, j] = False
@@ -210,7 +212,7 @@ def get_minimum_seam(im, mask=None, remove_mask=None):
         j = backtrack[i, j]
 
     seam_idx.reverse()
-    return np.array(seam_idx), boolmask
+    return seam_idx, boolmask
 
 ########################################
 # MAIN ALGORITHM
@@ -374,4 +376,3 @@ if __name__ == '__main__':
         assert rmask is not None
         output = object_removal(im, rmask, mask, args["vis"], args["hremove"])
         cv2.imwrite(OUTPUT_NAME, output)
-
