@@ -4,6 +4,8 @@
 
 A fast Python implementation of [Seam Carving for Content-Aware Image Resizing ](https://inst.eecs.berkeley.edu/~cs194-26/fa18/hw/proj4-seamcarving/imret.pdf) (2007), including the improved energy algorithm described in [Improved Seam Carving for Video Retargeting](http://www.eng.tau.ac.il/~avidan/papers/vidret.pdf) (2008).
 
+🔥🔥🔥<b> - Integrated to [Huggingface Spaces](https://huggingface.co/spaces) with [Gradio](https://github.com/gradio-app/gradio). See demo: [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/givkashi/seam-carving) by [@givkashi](https://github.com/givkashi) </b>
+
 ## Requirements
 * OpenCV
 * scipy
